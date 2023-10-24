@@ -8,22 +8,25 @@ import userRoutes from './routes/user';
 const NAMESPACE = 'Server';
 const router = express();
 
-/** Log the request */
+// Logger 
 router.use((req, res, next) => {
-    /** Log the req */
+    // Log Req
     logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
-
     res.on('finish', () => {
-        /** Log the res */
+        // Log Res 
         logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`);
     });
+
+    // Call next() to pass control to the next middleware.
+    next();
 });
 
-/** Parse the body of the request */
+
+
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-/** Rules of our API */
+
 router.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -36,10 +39,10 @@ router.use((req, res, next) => {
     next();
 });
 
-/** Routes go here */
+// Routes 
 router.use('/users', userRoutes);
 
-/** Error handling */
+
 router.use((req, res, next) => {
     const error = new Error('Not found');
 

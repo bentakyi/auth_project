@@ -27,7 +27,7 @@ const signup = (req: Request, res: Response, next: NextFunction) => {
             });
         }
 
-        let query = `INSERT INTO Users (username, password) VALUES ("${email}", "${hash}")`;
+        let query = `INSERT INTO users (email, password) VALUES ("${email}", "${hash}")`;
 
         Connect()
             .then((connection) => {
@@ -60,7 +60,7 @@ const signup = (req: Request, res: Response, next: NextFunction) => {
 const signin = (req: Request, res: Response, next: NextFunction) => {
     let { email, password } = req.body;
 
-    let query = `SELECT * FROM users WHERE username = '${email}'`;
+    let query = `SELECT * FROM users WHERE email = '${email}'`;
 
     Connect()
         .then((connection) => {
@@ -109,6 +109,38 @@ const signin = (req: Request, res: Response, next: NextFunction) => {
 };
 
 
+const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
+    let query = `SELECT _id, username FROM users`;
+
+    Connect()
+        .then((connection) => {
+            Query<IUser[]>(connection, query)
+                .then((users) => {
+                    return res.status(200).json({
+                        users,
+                        count: users.length
+                    });
+                })
+                .catch((error) => {
+                    logging.error(NAMESPACE, error.message, error);
+
+                    return res.status(500).json({
+                        message: error.message,
+                        error
+                    });
+                });
+        })
+        .catch((error) => {
+            logging.error(NAMESPACE, error.message, error);
+
+            return res.status(500).json({
+                message: error.message,
+                error
+            });
+        });
+};
 
 
-export default {validateToken, signup, signin}
+
+
+export default {validateToken, signup, signin, getAllUsers}
