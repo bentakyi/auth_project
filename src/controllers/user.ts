@@ -109,38 +109,9 @@ const signin = (req: Request, res: Response, next: NextFunction) => {
 };
 
 
-const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
-    let query = `SELECT _id, username FROM users`;
-
-    Connect()
-        .then((connection) => {
-            Query<IUser[]>(connection, query)
-                .then((users) => {
-                    return res.status(200).json({
-                        users,
-                        count: users.length
-                    });
-                })
-                .catch((error) => {
-                    logging.error(NAMESPACE, error.message, error);
-
-                    return res.status(500).json({
-                        message: error.message,
-                        error
-                    });
-                });
-        })
-        .catch((error) => {
-            logging.error(NAMESPACE, error.message, error);
-
-            return res.status(500).json({
-                message: error.message,
-                error
-            });
-        });
-};
 
 
 
 
-export default {validateToken, signup, signin, getAllUsers}
+
+export default {validateToken, signup, signin}
